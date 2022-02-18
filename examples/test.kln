@@ -1,0 +1,3 @@
+program main(Array<string> args) {
+    return(0);
+}
