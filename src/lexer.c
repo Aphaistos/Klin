@@ -7,20 +7,20 @@ Lexer* create_lexer(char* src) {
     Lexer* lexer = calloc(1, sizeof(struct LEXER));
     lexer->src = src;
     lexer->src_size = strlen(src);
-    lexer->i = 0;
-    lexer->curr_c = src[lexer->i];
+    lexer->position = 0;
+    lexer->curr_c = src[lexer->position];
 
     return lexer;
 }
 
 void lxr_advance(Lexer* lexer) {
-    if(lexer->i < lexer->src_size && lexer->curr_c != '0') {
-        lexer->i += 1;
-        lexer->curr_c = lexer->src[lexer->i];
+    if(lexer->position < lexer->src_size && lexer->curr_c != '\0') {
+        lexer->position += 1;
+        lexer->curr_c = lexer->src[lexer->position];
     }
 }
 char lxr_peek(Lexer* lexer, int offset) {
-    return lexer->src[MIN(lexer->i + offset, lexer->src_size)];
+    return lexer->src[MIN(lexer->position + offset, lexer->src_size)];
 }
 void lxr_skip_whitespace(Lexer* lexer) {
     while(lexer->curr_c == 13 || lexer->curr_c == 10 || lexer->curr_c == ' ' || lexer->curr_c == '\t') {
@@ -53,26 +53,27 @@ Token* lxr_parse_id(Lexer* lexer) {
     return create_token(value, TOKT_IDENTIFIER);
 }
 Token* lxr_parse_number(Lexer* lexer) {
-    char* value = calloc(1, sizeof(char));
+  char* value = calloc(1, sizeof(char));
 
-    while(isdigit(lexer->curr_c) || lexer->curr_c == '0') {
-        value = realloc(value, (strlen(value) + 2) * sizeof(char));
-        strcat(value, (char[]) {lexer->curr_c, 0});
-        lxr_advance(lexer);
-    }
+  while (isdigit(lexer->curr_c)) {
+    value = realloc(value, (strlen(value) + 2) * sizeof(char));
+    strcat(value, (char[]){lexer->curr_c, 0});
+    lxr_advance(lexer);
+  }
 
-    return create_token(value, TOKT_INT);
+  return create_token(value, TOKT_INT);
 }
 
 Token* lxr_next_token(Lexer* lexer) {
     while (lexer->curr_c != '\0') {
         lxr_skip_whitespace(lexer);
 
-        if(isalpha(lexer->curr_c)) // Check if character is alphanumeric
-            return lxr_parse_id(lexer); // Parse identifier
-        if(isdigit(lexer->curr_c) || lexer->curr_c == '0')
-            return lxr_parse_number(lexer);
-            
+        if(isalpha(lexer->curr_c)) 
+          return lxr_parse_id(lexer);
+        
+        if(isdigit(lexer->curr_c)) 
+          return lxr_parse_number(lexer);
+        
         switch (lexer->curr_c) {
             case '=': return lxr_advance_current(lexer, TOKT_EQUALS);
             case '(': return lxr_advance_current(lexer, TOKT_LPAREN);

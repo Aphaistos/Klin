@@ -25,7 +25,6 @@ AbstractTree* prsr_parse(Parser* parser) {
     return prsr_parse_compound(parser);
 }
 AbstractTree* prsr_parse_id(Parser* parser) {
-    printf("id\n");
     char* value = calloc(strlen(parser->token->value) + 1, sizeof(char));
     strcpy(value, parser->token->value);
     prsr_eat(parser, TOKT_IDENTIFIER);
@@ -50,7 +49,6 @@ AbstractTree* prsr_parse_id(Parser* parser) {
             AbstractTree* assignment = create_ast(AST_ASSIGNMENT); 
             assignment->name = ast->name;
             assignment->value = prsr_parse_expr(parser);
-            printf("  Assignment{Name=\"%s\"}\n", assignment->name);
             return assignment;
         }
         if(parser->token->type == TOKT_LPAREN) {
@@ -59,7 +57,6 @@ AbstractTree* prsr_parse_id(Parser* parser) {
             function->dtype = ast->dtype;
             prsr_parse_list(parser);
             function->value = prsr_parse_compound(parser);
-            printf("  Function{Name=\"%s\",DataType=%d}\n", function->name, function->dtype);
             return function;
         }
     } 
@@ -68,33 +65,9 @@ AbstractTree* prsr_parse_id(Parser* parser) {
         ast->value = prsr_parse_list(parser);
     }
 
-
-    /*if(parser->token->type == TOKT_IDENTIFIER) {
-        ast->dtype += typename_to_int(parser->token->value);
-        printf("%s\n", parser->token->value);
-        prsr_eat(parser, TOKT_IDENTIFIER);
-    }*/
-    /*if(parser->token->type == TOKT_COLON) {
-        prsr_eat(parser, TOKT_COLON);
-        while(parser->token->type == TOKT_IDENTIFIER) {
-                ast->dtype += typename_to_int(parser->token->value);
-                printf("%s\n", parser->token->value);
-                prsr_eat(parser, TOKT_IDENTIFIER);
-
-            if(parser->token->type == TOKT_LT) {
-                prsr_eat(parser, TOKT_LT);
-                ast->dtype += typename_to_int(parser->token->value);
-                prsr_eat(parser, TOKT_IDENTIFIER);
-                prsr_eat(parser, TOKT_GT);
-            }
-        }
-    }*/
-    
-    printf("  Identifier{Name=\"%s\",DataType=%d}\n", ast->name, ast->dtype);
     return ast;
 }
 AbstractTree* prsr_parse_block(Parser* parser) {
-    printf("b\n");
     prsr_eat(parser, TOKT_LBRACE);
     AbstractTree* ast = create_ast(AST_COMPOUND);
 
@@ -104,18 +77,15 @@ AbstractTree* prsr_parse_block(Parser* parser) {
 
     prsr_eat(parser, TOKT_RBRACE);
 
-    printf("  Block{}\n");
     return ast;
 }
 AbstractTree* prsr_parse_list(Parser* parser) {
-    printf("l\n");
     prsr_eat(parser, TOKT_LPAREN);
 
     AbstractTree* ast = create_ast(AST_COMPOUND);
 
     if(parser->token->type == TOKT_RPAREN) {
         prsr_eat(parser, TOKT_RPAREN);
-        printf("  List{}\n");
         return ast;
     }
 
@@ -128,18 +98,17 @@ AbstractTree* prsr_parse_list(Parser* parser) {
 
     prsr_eat(parser, TOKT_RPAREN);
     
-    printf("  List{}\n");
     return ast;
 }
 AbstractTree* prsr_parse_int(Parser* parser) {
-    printf("i\n");
-    int value = atoi(parser->token->value);
+    printf("%s\n", parser->token->value);
+
+    int int_value = atoi(parser->token->value);
     prsr_eat(parser, TOKT_INT);
 
     AbstractTree* ast = create_ast(AST_INT);
-    ast->int_value = value;
-    
-    printf("  Integer{IntValue=%d}\n", value);
+    ast->int_value = int_value;
+
     return ast;
 }
 AbstractTree* prsr_parse_expr(Parser* parser) {
@@ -169,6 +138,5 @@ AbstractTree* prsr_parse_compound(Parser* parser) {
     if(should_close)
         prsr_eat(parser, TOKT_RBRACE);
 
-    printf("Compound{}\n");
     return compound;
 }

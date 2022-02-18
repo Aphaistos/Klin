@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "as_frontend.h": "c",
+        "ast.h": "c",
+        "io.h": "c",
+        "klin.h": "c",
+        "parser.h": "c",
+        "lexer.h": "c",
+        "type_traits": "c",
+        "xtr1common": "c"
+    }
+}

@@ -7,7 +7,7 @@ typedef struct LEXER {
     char* src;
     size_t src_size;
     char curr_c;
-    unsigned int i;
+    unsigned int position;
 } Lexer;
 
 Lexer* create_lexer(char* src);
