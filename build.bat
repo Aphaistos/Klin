@@ -1,4 +1,4 @@
-@@echo off
+@echo off
 for %%f in (src\*.c) do (
     if "%%~xf"==".c" CALL :makeofile %%~nf
 )
