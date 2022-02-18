@@ -1,2 +1,2 @@
 @echo off
-"bin/klin.exe" examples/test.kln
+"bin/klin.exe" examples/main.kln
