@@ -23,6 +23,10 @@ void kln_compile(char* src) {
 
     char* s = as_f_root(root);
     printf("``\n%s\n``\n", s);
+    
+    write_file("program.s", s);
+    system("as program.s -o bin/program.o");
+    system("ld bin/program.o -o bin/program.exe");
 }
 
 void kln_compile_file(const char* filename) {
